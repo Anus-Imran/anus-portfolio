@@ -8,9 +8,9 @@ import { api } from "../api";
 import { projects as fallbackProjects } from "../constants";
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.96 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
-  exit: { opacity: 0, y: -20, scale: 0.96, transition: { duration: 0.2 } },
+  hidden: { opacity: 0, y: 40, scale: 0.96 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
+  exit: { opacity: 0, y: -20, scale: 0.96, transition: { duration: 0.25 } },
 };
 
 const TABS = ['All', 'Basic', 'Advanced'];
@@ -24,66 +24,58 @@ const ProjectCard = ({ project }) => {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="group relative rounded-xl overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(145,94,255,0.25)] flex flex-col h-full bg-[#151030]/80 border border-white/10 backdrop-blur-md"
+      className="hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-in-out rounded-lg overflow-hidden"
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'rgba(255,255,255,0.09)',
+        border: '1px solid rgba(255,255,255,0.2)',
+      }}
     >
-      {/* Fixed-height image container with overlay glow */}
-      <div className="relative w-full h-[200px] overflow-hidden flex-shrink-0">
-        <img
-          src={project.image_url || project.image}
-          alt={project.title || project.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
-          onError={e => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x200/1a1a2e/915eff?text=Project+Preview'; }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#151030] via-transparent to-transparent opacity-80" />
-        
-        {/* Category Badge */}
-        <span className={`absolute top-3 left-3 text-[11px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-md border shadow-md ${
-          project.category === 'Advanced'
-            ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-            : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-        }`}>
-          {project.category || 'Featured'}
-        </span>
-      </div>
+      {/* Fixed-height image */}
+      <img
+        src={project.image_url || project.image}
+        alt={project.title || project.name}
+        className="w-full object-cover"
+        style={{ height: 190, flexShrink: 0 }}
+        onError={e => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x190/1a1a2e/915eff?text=Project'; }}
+      />
 
-      {/* Card Content */}
-      <div className="flex flex-col p-5 flex-grow justify-between gap-3">
-        <div>
-          <h3 className="font-bold text-xl text-white group-hover:text-[#915eff] transition-colors duration-200">
-            {project.title || project.name}
-          </h3>
-          <p className="text-xs sm:text-sm text-gray-300/90 line-clamp-3 mt-2 leading-relaxed">
-            {project.description}
-          </p>
-        </div>
+      {/* Body — grows to fill remaining height */}
+      <div className="flex flex-col !p-4" style={{ flex: 1, gap: '0.5rem' }}>
+        <span style={{
+          fontSize: '0.65rem', padding: '0.15rem 0.55rem', borderRadius: 99, fontWeight: 600,
+          background: project.category === 'Advanced' ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)',
+          color: project.category === 'Advanced' ? '#f87171' : '#4ade80',
+          border: `1px solid ${project.category === 'Advanced' ? 'rgba(239,68,68,0.3)' : 'rgba(34,197,94,0.3)'}`,
+          alignSelf: 'flex-start',
+        }}>{project.category || 'Basic'}</span>
 
-        {/* Tech tags preview if available */}
-        {(project.tech_stack || project.tags) && (
-          <div className="flex flex-wrap gap-1.5 mt-1">
-            {(project.tech_stack || (project.tags || []).map(t => t.name)).slice(0, 4).map((tech, i) => (
-              <span key={i} className="text-[11px] px-2 py-0.5 rounded bg-white/5 text-purple-200 border border-white/10">
-                #{tech}
-              </span>
-            ))}
-          </div>
-        )}
+        <h2 className="font-bold text-[18px] text-white">{project.title || project.name}</h2>
 
-        {/* Action Buttons */}
-        <div className="flex items-center justify-between pt-3 border-t border-white/10 mt-auto">
+        {/* Description fills available space, clamped to 3 lines */}
+        <p className="text-xs sm:text-sm text-gray-300 line-clamp-3" style={{ flex: 1 }}>
+          {project.description}
+        </p>
+
+        {/* Buttons always at bottom */}
+        <div className="flex justify-between items-center !pt-2">
           {(project.live_demo_link || project.source_code_link) ? (
             <button
-              className="text-cyan-400 hover:text-cyan-300 text-xs sm:text-sm font-medium flex items-center cursor-pointer transition-colors"
+              className="text-blue-400 text-xs sm:text-[13px] flex items-center cursor-pointer whitespace-nowrap"
               onClick={() => window.open(project.live_demo_link || project.source_code_link, '_blank')}
             >
-              Live Demo <FaArrowUpRightFromSquare className="ml-1.5 text-xs" />
+              Live Demo <FaArrowUpRightFromSquare className="!ml-1 text-sm" />
             </button>
           ) : <div />}
           
           <button
-            className="px-3.5 py-1.5 rounded-lg bg-[#915eff]/20 hover:bg-[#915eff] text-white text-xs font-semibold flex items-center cursor-pointer transition-all duration-200 border border-[#915eff]/40 hover:border-[#915eff]"
+            className="!py-2 !px-3 rounded-sm cursor-pointer text-xs flex items-center whitespace-nowrap text-white"
+            style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
             onClick={() => navigate(`/project/${project.id || 1}`)}
           >
-            Details <FaArrowRight className="ml-1.5 text-xs" />
+            Details <FaArrowRight className="!ml-1 text-sm" />
           </button>
         </div>
       </div>
@@ -123,28 +115,28 @@ const Works = () => {
   return (
     <section
       id="work"
-      className="!py-12 !px-4 sm:!px-6 md:!px-8 lg:!px-10 xl:!px-12 w-full flex flex-col items-center relative z-10"
+      className="!py-12 !px-4 sm:!px-6 md:!px-8 lg:!px-10 xl:!px-12 w-full flex flex-col items-center"
       style={{ background: 'linear-gradient(135deg, #050816 0%, #150025 50%, #050816 100%)' }}
     >
       {/* Heading */}
-      <div className="text-center max-w-2xl">
-        <p className={`${styles.sectionSubText}`}>My Dynamic Portfolio</p>
+      <div className="text-center">
+        <p className={`${styles.sectionSubText}`}>Projects I Have Done</p>
         <h2 className={`${styles.sectionHeadText}`}>
-          Featured <span className="text-[#915eff]">Projects</span>
+          Portfolio <span className="text-[#915eff]">Showcase</span>
         </h2>
       </div>
 
-      {/* Controls: Search + Tabs */}
-      <div className="w-full max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 mb-4">
+      {/* Controls Container */}
+      <div className="flex flex-col sm:flex-row items-center justify-center !mt-8 !mb-2 gap-4 w-full max-w-4xl">
         {/* Search Bar */}
-        <div className="relative w-full sm:w-72">
-          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 text-sm" />
+        <div className="relative w-full sm:w-64">
+          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 text-xs" />
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search projects or tech..."
-            className="w-full bg-white/5 border border-white/15 focus:border-[#915eff] rounded-full pl-9 pr-8 py-2 text-xs sm:text-sm text-white placeholder-gray-400 outline-none transition-all shadow-inner"
+            placeholder="Search projects..."
+            className="w-full bg-white/5 border border-white/20 rounded-full !pl-9 !pr-8 !py-2 text-xs text-white placeholder-gray-400 outline-none"
           />
           {searchQuery && (
             <button
@@ -156,31 +148,32 @@ const Works = () => {
           )}
         </div>
 
-        {/* Category Tabs */}
-        <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full p-1 shadow-lg">
+        {/* Tabs */}
+        <div className="flex items-center" style={{ gap: '0.5rem', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '9999px', padding: '0.3rem' }}>
           {TABS.map(tab => {
             const isActive = activeTab === tab;
-            const count = projects.filter(p => {
-              const matchesCategory = tab === 'All' || (p.category || 'Basic') === tab;
-              return matchesCategory;
-            }).length;
-
+            const count = projects.filter(p => (tab === 'All' || (p.category || 'Basic') === tab)).length;
             return (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`relative px-4 py-1.5 rounded-full font-semibold text-xs sm:text-sm transition-all duration-300 cursor-pointer ${
-                  isActive
-                    ? 'text-white bg-gradient-to-r from-[#915eff] to-[#5c3d9e] shadow-[0_0_15px_rgba(145,94,255,0.4)]'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
+                className="relative cursor-pointer font-semibold text-sm transition-all duration-300"
+                style={{
+                  padding: '0.5rem 1.25rem',
+                  borderRadius: '9999px',
+                  color: isActive ? '#fff' : 'rgba(255,255,255,0.45)',
+                  background: isActive ? 'linear-gradient(135deg, #915eff, #5c3d9e)' : 'transparent',
+                  boxShadow: isActive ? '0 0 16px rgba(145,94,255,0.35)' : 'none',
+                  border: 'none',
+                }}
               >
                 {tab}
-                <span className={`ml-1.5 text-[10px] px-1.5 py-0.2 rounded-full ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-gray-400'
-                }`}>
-                  {count}
-                </span>
+                <span style={{
+                  marginLeft: '0.35rem', fontSize: '0.65rem', padding: '0.05rem 0.4rem',
+                  borderRadius: 99, verticalAlign: 'middle',
+                  background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)',
+                  color: isActive ? '#fff' : 'rgba(255,255,255,0.4)',
+                }}>{count}</span>
               </button>
             );
           })}
@@ -188,21 +181,26 @@ const Works = () => {
       </div>
 
       {/* Grid */}
-      <div className="w-full max-w-7xl mt-6">
+      <div className="!px-4 sm:!px-6 !py-6 !my-4 w-full xl:max-w-7xl !mx-auto">
         <AnimatePresence mode="popLayout">
           {filtered.length === 0 ? (
-            <motion.div
+            <motion.p
               key="empty"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-gray-400 text-sm py-16 text-center w-full bg-white/5 rounded-2xl border border-white/10"
+              className="text-gray-500 text-sm !py-12 text-center w-full"
             >
-              No projects found matching your search criteria.
-            </motion.div>
+              No {activeTab === 'All' ? '' : activeTab + ' '}projects match your search.
+            </motion.p>
           ) : (
             <motion.div
               key={`${activeTab}-${searchQuery}`}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                gap: '1.5rem',
+                alignItems: 'stretch',
+              }}
             >
               {filtered.map(project => (
                 <ProjectCard key={project.id} project={project} />
