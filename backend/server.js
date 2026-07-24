@@ -23,6 +23,7 @@ app.use('/api/tech', require('./routes/tech'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/contact', require('./routes/contact'));
 
+app.get('/', (req, res) => res.json({ status: 'ok', message: 'Portfolio API running' }));
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
 const PORT = process.env.PORT || 5000;

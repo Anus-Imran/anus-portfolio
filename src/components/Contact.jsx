@@ -140,8 +140,8 @@ const Contact = () => {
               <p className="text-gray-300 !mb-4 text-center">Have something to discuss? Send me a message and let's talk.</p>
               <form className="flex flex-col gap-4" ref={formRef} onSubmit={handleSubmit} noValidate>
                 {/* Name */}
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400 text-xl">
+                <div className="relative group">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 text-xl group-focus-within:text-cyan-400 transition-colors">
                     <HiOutlineUser />
                   </span>
                   <input
@@ -150,12 +150,12 @@ const Contact = () => {
                     value={values.name}
                     onChange={handleChange}
                     placeholder="Your Name"
-                    className={`bg-white/10 border border-white/20 rounded-lg !pl-10 !pr-4 !py-3 text-white placeholder-gray-400 outline-none w-full`}
+                    className="bg-white/5 border border-white/15 focus:border-[#915eff] focus:ring-2 focus:ring-[#915eff]/40 rounded-xl !pl-11 !pr-4 !py-3 text-white placeholder-gray-400 outline-none w-full transition-all duration-300 shadow-inner"
                   />
                 </div>
                 {/* Email */}
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400 text-xl">
+                <div className="relative group">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 text-xl group-focus-within:text-cyan-400 transition-colors">
                     <HiOutlineMail />
                   </span>
                   <input
@@ -164,12 +164,12 @@ const Contact = () => {
                     value={values.email}
                     onChange={handleChange}
                     placeholder="Your Email"
-                    className={`bg-white/10 border border-white/20 rounded-lg !pl-10 !pr-4 !py-3 text-white placeholder-gray-400 outline-none w-full`}
+                    className="bg-white/5 border border-white/15 focus:border-[#915eff] focus:ring-2 focus:ring-[#915eff]/40 rounded-xl !pl-11 !pr-4 !py-3 text-white placeholder-gray-400 outline-none w-full transition-all duration-300 shadow-inner"
                   />
                 </div>
                 {/* Message */}
-                <div className="relative">
-                  <span className="absolute left-3 top-4 text-purple-400 text-xl">
+                <div className="relative group">
+                  <span className="absolute left-3.5 top-4 text-purple-400 text-xl group-focus-within:text-cyan-400 transition-colors">
                     <HiOutlineChat />
                   </span>
                   <textarea
@@ -178,16 +178,16 @@ const Contact = () => {
                     onChange={handleChange}
                     placeholder="Your Message"
                     rows={4}
-                    className={`bg-white/10 border border-white/20 rounded-lg !pl-10 !pr-4 !py-3 text-white placeholder-gray-400 outline-none resize-none w-full`}
+                    className="bg-white/5 border border-white/15 focus:border-[#915eff] focus:ring-2 focus:ring-[#915eff]/40 rounded-xl !pl-11 !pr-4 !py-3 text-white placeholder-gray-400 outline-none resize-none w-full transition-all duration-300 shadow-inner"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="!mt-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold !py-3 rounded-lg shadow-md hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="!mt-2 bg-gradient-to-r from-purple-600 via-[#915eff] to-cyan-500 text-white font-semibold !py-3.5 rounded-xl shadow-[0_0_20px_rgba(145,94,255,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2.5 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                 >
-                  <FaPaperPlane className="text-lg" />
-                  <span>{loading ? 'Sending...' : 'Send Message'}</span>
+                  <FaPaperPlane className="text-lg animate-pulse" />
+                  <span>{loading ? 'Sending Message...' : 'Send Message'}</span>
                 </button>
               </form>
             </div>

@@ -9,16 +9,29 @@ const Navbar = () => {
   const [active, setActive] = useState('');
   const [toggle, setToggle] = useState(false);
   const [isSmallDevice, setIsSmallDevice] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
       setIsSmallDevice(window.innerWidth < 640); // Small device breakpoint
     };
 
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
     window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleScroll);
     handleResize(); // Initial check
 
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   // Smooth scroll function
@@ -40,11 +53,11 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`${styles.paddingX} w-full flex top-0 z-20 bg-transparent items-center justify-center`}
-      style={{
-        padding: isSmallDevice ? '10px 10px' : '15px 0',
-        margin: isSmallDevice ? '5px 0' : '0 0',
-      }}
+      className={`${styles.paddingX} w-full flex fixed top-0 z-50 transition-all duration-300 ease-in-out items-center justify-center ${
+        scrolled
+          ? 'bg-[#050816]/85 backdrop-blur-lg border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-3'
+          : 'bg-transparent py-4'
+      }`}
     >
       {/* ✅ Added relative to allow dropdown positioning */}
       <div className="relative w-full flex justify-between items-center max-w-7xl !mx-auto">

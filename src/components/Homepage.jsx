@@ -3,8 +3,8 @@ import { About, Contact, Experience, Feedbacks, Hero, Tech, Works, StarsCanvas, 
 const HomePage = () => {
     return (
         <>
-            <div className="bg-[url('/src/assets/herobg.png')] bg-cover bg-no-repeat bg-center h-[750px] w-full flex flex-col justify-between items-center">
-                <Navbar />
+            <Navbar />
+            <div className="bg-[url('/src/assets/herobg.png')] bg-cover bg-no-repeat bg-center min-h-screen w-full flex flex-col justify-between items-center relative z-10">
                 <Hero />
             </div>
             <Divider />
@@ -21,7 +21,7 @@ const HomePage = () => {
             <div className="relative z-0">
                 <Divider />
                 <Contact />
-                {/* <StarsCanvas /> */}
+                <StarsCanvas />
             </div>
         </>
     );
