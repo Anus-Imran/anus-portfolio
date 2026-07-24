@@ -123,7 +123,7 @@ const Works = () => {
   return (
     <section
       id="work"
-      className="py-16 px-4 sm:px-8 lg:px-12 w-full flex flex-col items-center relative z-10"
+      className="!py-12 !px-4 sm:!px-6 md:!px-8 lg:!px-10 xl:!px-12 w-full flex flex-col items-center relative z-10"
       style={{ background: 'linear-gradient(135deg, #050816 0%, #150025 50%, #050816 100%)' }}
     >
       {/* Heading */}

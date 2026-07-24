@@ -53,11 +53,11 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`${styles.paddingX} w-full flex fixed top-0 z-50 transition-all duration-300 ease-in-out items-center justify-center ${
-        scrolled
-          ? 'bg-[#050816]/85 backdrop-blur-lg border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-3'
-          : 'bg-transparent py-4'
-      }`}
+      className={`${styles.paddingX} w-full flex top-0 z-20 bg-transparent items-center justify-center`}
+      style={{
+        padding: isSmallDevice ? '10px 10px' : '15px 0',
+        margin: isSmallDevice ? '5px 0' : '0 0',
+      }}
     >
       {/* ✅ Added relative to allow dropdown positioning */}
       <div className="relative w-full flex justify-between items-center max-w-7xl !mx-auto">
