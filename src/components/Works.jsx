@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { styles } from "../style";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
-import { FaArrowRight, FaSearch, FaTimes } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "../api";
@@ -36,7 +36,7 @@ const ProjectCard = ({ project }) => {
       {/* Fixed-height image */}
       <img
         src={project.image_url || project.image}
-        alt={project.title || project.name}
+        alt="Project Preview"
         className="w-full object-cover"
         style={{ height: 190, flexShrink: 0 }}
         onError={e => { e.target.onerror = null; e.target.src = 'https://placehold.co/400x190/1a1a2e/915eff?text=Project'; }}
@@ -61,15 +61,12 @@ const ProjectCard = ({ project }) => {
 
         {/* Buttons always at bottom */}
         <div className="flex justify-between items-center !pt-2">
-          {(project.live_demo_link || project.source_code_link) ? (
-            <button
-              className="text-blue-400 text-xs sm:text-[13px] flex items-center cursor-pointer whitespace-nowrap"
-              onClick={() => window.open(project.live_demo_link || project.source_code_link, '_blank')}
-            >
-              Live Demo <FaArrowUpRightFromSquare className="!ml-1 text-sm" />
-            </button>
-          ) : <div />}
-          
+          <button
+            className="text-blue-400 text-xs sm:text-[13px] flex items-center cursor-pointer whitespace-nowrap"
+            onClick={() => window.open(project.live_demo_link || project.source_code_link, '_blank')}
+          >
+            Live Demo <FaArrowUpRightFromSquare className="!ml-1 text-sm" />
+          </button>
           <button
             className="!py-2 !px-3 rounded-sm cursor-pointer text-xs flex items-center whitespace-nowrap text-white"
             style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
@@ -86,7 +83,6 @@ const ProjectCard = ({ project }) => {
 const Works = () => {
   const [projects, setProjects] = useState([]);
   const [activeTab, setActiveTab] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     api.getProjects()
@@ -102,15 +98,9 @@ const Works = () => {
       });
   }, []);
 
-  const filtered = projects.filter(project => {
-    const matchesTab = activeTab === 'All' || (project.category || 'Basic') === activeTab;
-    const q = searchQuery.toLowerCase().trim();
-    const titleMatch = (project.title || project.name || '').toLowerCase().includes(q);
-    const descMatch = (project.description || '').toLowerCase().includes(q);
-    const techMatch = (project.tech_stack || []).some(t => t.toLowerCase().includes(q));
-    const matchesSearch = !q || titleMatch || descMatch || techMatch;
-    return matchesTab && matchesSearch;
-  });
+  const filtered = activeTab === 'All'
+    ? projects
+    : projects.filter(p => (p.category || 'Basic') === activeTab);
 
   return (
     <section
@@ -126,58 +116,35 @@ const Works = () => {
         </h2>
       </div>
 
-      {/* Controls Container */}
-      <div className="flex flex-col sm:flex-row items-center justify-center !mt-8 !mb-2 gap-4 w-full max-w-4xl">
-        {/* Search Bar */}
-        <div className="relative w-full sm:w-64">
-          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-purple-400 text-xs" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search projects..."
-            className="w-full bg-white/5 border border-white/20 rounded-full !pl-9 !pr-8 !py-2 text-xs text-white placeholder-gray-400 outline-none"
-          />
-          {searchQuery && (
+      {/* Tabs */}
+      <div className="flex items-center !mt-8 !mb-2" style={{ gap: '0.5rem', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '9999px', padding: '0.3rem' }}>
+        {TABS.map(tab => {
+          const isActive = activeTab === tab;
+          const count = tab === 'All' ? projects.length : projects.filter(p => (p.category || 'Basic') === tab).length;
+          return (
             <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white cursor-pointer"
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className="relative cursor-pointer font-semibold text-sm transition-all duration-300"
+              style={{
+                padding: '0.5rem 1.25rem',
+                borderRadius: '9999px',
+                color: isActive ? '#fff' : 'rgba(255,255,255,0.45)',
+                background: isActive ? 'linear-gradient(135deg, #915eff, #5c3d9e)' : 'transparent',
+                boxShadow: isActive ? '0 0 16px rgba(145,94,255,0.35)' : 'none',
+                border: 'none',
+              }}
             >
-              <FaTimes className="text-xs" />
+              {tab}
+              <span style={{
+                marginLeft: '0.35rem', fontSize: '0.65rem', padding: '0.05rem 0.4rem',
+                borderRadius: 99, verticalAlign: 'middle',
+                background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)',
+                color: isActive ? '#fff' : 'rgba(255,255,255,0.4)',
+              }}>{count}</span>
             </button>
-          )}
-        </div>
-
-        {/* Tabs */}
-        <div className="flex items-center" style={{ gap: '0.5rem', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '9999px', padding: '0.3rem' }}>
-          {TABS.map(tab => {
-            const isActive = activeTab === tab;
-            const count = projects.filter(p => (tab === 'All' || (p.category || 'Basic') === tab)).length;
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className="relative cursor-pointer font-semibold text-sm transition-all duration-300"
-                style={{
-                  padding: '0.5rem 1.25rem',
-                  borderRadius: '9999px',
-                  color: isActive ? '#fff' : 'rgba(255,255,255,0.45)',
-                  background: isActive ? 'linear-gradient(135deg, #915eff, #5c3d9e)' : 'transparent',
-                  boxShadow: isActive ? '0 0 16px rgba(145,94,255,0.35)' : 'none',
-                  border: 'none',
-                }}
-              >
-                {tab}
-                <span style={{
-                  marginLeft: '0.35rem', fontSize: '0.65rem', padding: '0.05rem 0.4rem',
-                  borderRadius: 99, verticalAlign: 'middle',
-                  background: isActive ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)',
-                  color: isActive ? '#fff' : 'rgba(255,255,255,0.4)',
-                }}>{count}</span>
-              </button>
-            );
-          })}
-        </div>
+          );
+        })}
       </div>
 
       {/* Grid */}
@@ -190,11 +157,11 @@ const Works = () => {
               animate={{ opacity: 1 }}
               className="text-gray-500 text-sm !py-12 text-center w-full"
             >
-              No {activeTab === 'All' ? '' : activeTab + ' '}projects match your search.
+              No {activeTab === 'All' ? '' : activeTab + ' '}projects yet.
             </motion.p>
           ) : (
             <motion.div
-              key={`${activeTab}-${searchQuery}`}
+              key={activeTab}
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
